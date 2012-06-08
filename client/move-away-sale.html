@@ -1,0 +1,429 @@
+<head>
+  <title>Thomas's Move Away Sale</title>
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-31607988-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+</head>
+
+<body>
+    <div class="navbar navbar-fixed-top">
+		<div class="success message hide">
+	        <h3>You have successfully logged in!</h3>
+		</div>
+		
+		<div class="info message hide">
+            <h3>You have successfully logged out!</h3>
+		</div>
+
+        <div class="navbar-inner">
+            <div class="container">
+                {{> navbar }}
+				<div class="timer" />
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+	
+        {{> welcome }}
+        {{> content }}
+		{{> loginForm}}
+		{{> raForm}}
+		{{> notify}}
+		<p id="back-top">
+			<a href="#top">
+				<span></span>
+			</a>
+		</p>
+    </div>
+</body>
+
+<template name="navbar">
+    <a href="#" class="brand"> Thomas's Move Away Sale!</a>
+
+	<!-- <ul> -->
+		<!-- <li class="timer-li"> -->
+		<!-- </li> -->
+	<!-- </ul> -->
+	
+    <ul class="nav pull-right">
+		{{#if loggedIn}}
+			<li>
+	            <a href="#" id="logout">
+	                Logout
+	            </a>
+	        </li>
+		{{else}}
+			<li>
+	            <a href="#login" data-toggle="modal">
+	                Login
+	            </a>
+	        </li>
+		{{/if}}
+		
+    </ul>
+	
+	
+
+</template>
+
+<template name="welcome">
+	
+    <div class="hero-unit">
+        <h1>
+            Hi!
+        </h1>
+        <br />
+        <br />
+        <p>
+            I am graduating and will be moving out of Columbus soon (Hellooooo SF!), so I'm trying to get rid of all my stuffs.
+        </p>
+        <br />
+		<p>
+			Bid -> Win -> Free Delivery*
+		</p>
+		<br />
+		<br />
+        <p>
+            <a href="http://thomasloh.me" target="_blank" class="btn btn-large btn-primary">
+                thomasloh.me
+            </a>
+            <a href="https://twitter.com/#!/thomas_loh" target="_blank" class="btn btn-large btn-primary">
+                Twitter
+            </a>
+            <a href="http://www.linkedin.com/in/lohthomas" target="_blank" class="btn btn-large btn-primary">
+                Linkedin
+            </a>
+            <a href="https://github.com/thomasloh" target="_blank" class="btn btn-large btn-primary">
+                Github
+            </a>
+        </p>
+		<ul class="more">
+			<li>
+				<strong>*</strong> Delivery excludes Bed
+			</li>
+			<li>
+				<strong>*</strong> Auction ends May 31st 1200am
+			</li>
+		</ul>
+    </div>
+
+</template>
+
+<template name="content">
+    <div class="content">
+        {{#each posts}}
+
+            {{> listing}}
+            {{> bidHistory}}
+        
+        {{/each}}
+        
+    </div>
+</template>
+
+<template name="listing">
+
+    <div class="row">
+        
+        <!-- Info about this item -->
+        {{> info }}
+        
+        <!-- Picture of this item -->
+        {{> picture }}
+            
+    </div>
+    
+</template>
+
+<template name="info">
+    
+    <div class="span4">
+        <!-- Bid well here -->
+        <div class="well main">
+            
+            <h1>{{caption}} </h1>
+            <br /><br />
+            <blockquote>
+        
+                <h4>
+                    {{description}}
+                </h4>
+
+            </blockquote>
+            
+            <h4 class="currentBidLabel currentBid">Highest Bidder: {{mask getHighestBidder bidHistory}}</h5>
+            <div class="well currentBid">
+                
+                <h1 class="bid"> {{getCurrentBid bidHistory currentBid}}</h1>
+                
+            </div>
+            
+            <p class="currentBid">
+                <h5 class="startingBidLabel">Starting bid: ${{startingBid}}</h5>
+                <a href={{modalLaunchId caption}} data-toggle="modal" class="bidHistoryLabel">Bid History</a>
+            </p>
+
+            <div class="row">
+                <div class="span3">
+
+                    {{#if sold}}
+						
+                    <button class="large blue nice button radius sold">
+                            Sold
+                    </button>
+					
+					
+					{{else}}
+                    <button class="large green nice button radius bid">
+                            Bid ${{getNextBidPrice bidHistory currentBid}}
+                    </button>
+
+					{{/if}}
+					
+					<p class="sure hide">
+						Are you sure?
+						<button class="small green nice button radius yes">
+	                            Yes
+	                    </button>
+	                    <button class="small red nice button radius no">
+	                            No
+	                    </button>
+	                    
+					</p>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</template>
+
+
+<template name="picture">
+    {{#if largeImg }}
+        <div class="span8">
+    {{else}}
+        <div class="span5">
+    {{/if}}
+            <!-- Picture -->
+            <div class="carousel" id={{id}}>
+              <div class="carousel-inner">
+
+                    <div class="item active">
+                        <img src={{profilePic}} />
+                        <div class="carousel-caption">
+                            <h4>{{ caption }}</h4>
+                            <p>{{ description }}</p>
+                        </div>
+                    </div>
+              {{#each restOfImages}}
+                    <div class="item">
+                        <img src={{this}} />
+                        <div class="carousel-caption">
+                            <h4> {{getCaption this}} </h4>
+                            <p> {{getDescription this}} </p>
+                        </div>
+                    </div>
+              {{/each}}
+            
+                </div>
+            
+                  {{#if mult}}
+                    <a class="carousel-control left" href={{navId id}} data-slide="prev">&lsaquo;</a>
+                    <a class="carousel-control right" href={{navId id}} data-slide="next">&rsaquo;</a>
+                  {{/if}}
+                  </div>
+              </div>
+            </div>
+        </div>
+</template>
+
+<template name="bidHistory">
+    
+    <div class="modal hide" id={{modalId caption}}>
+        
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Bid History</h3>
+        </div>
+        
+        <div class="modal-body">
+            
+            {{#if empty bidHistory}}
+                
+                <p> No bids yet =( </p>
+                
+            
+            {{else}}
+                
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Bid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {{#each orderDesc bidHistory}}
+                            <tr>
+                                <td>{{mask this.user}}</td>
+                                <td> $ {{this.bid}}</td>
+                            </tr>
+                        {{/each}}
+        
+                    </tbody>
+                </table>
+                </div>
+            
+            {{/if}}
+    
+        </div>
+    
+    </div>
+    
+</template>
+
+
+<template name="loginForm">
+	
+	<div class="modal fade hide" id="login">
+        
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal"> × </a>
+            <h3>Login</h3>
+        </div>
+        
+        <div class="modal-body">
+            
+			<form class="form-horizontal">
+			  <fieldset>
+			    <div class="control-group">
+			      <label class="control-label" for="input01"><strong>Email</strong></label>
+			      <div class="controls control-group email">
+			        <input type="text" class="input-xlarge" id="email">
+			      </div>
+				</div>
+			    <div class="control-group">
+			      <label class="control-label" for="input01"><strong>Password</strong></label>
+			      <div class="controls control-group password">
+			        <input type="password" class="input-xlarge" id="password">
+			      </div>
+			
+			    </div>
+			  </fieldset>
+			</form>
+			<button type="submit" class="btn btn-primary login"> Login </button>
+			<a href="#ra-form" id="rapopover" data-toggle="modal" class="btn btn-danger ra" rel="popover" data-content="Access is limited only to those who are really interested in buying my stuffs." data-original-title="Note"> Request Access </a>
+        </div>
+
+
+    </div>
+	
+</template>
+
+<template name="raForm">
+	
+	<div class="modal fade hide" id="ra-form">
+        
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal"> × </a>
+            <h3>Request Access</h3>
+        </div>
+        
+        <div class="modal-body">
+            
+			<form class="form-horizontal">
+			  <fieldset>
+			    <div class="control-group">
+			      <label class="control-label" for="emailra"><strong>Email</strong></label>
+			      <div class="controls control-group emailra">
+			        <input type="text" class="input-xlarge" id="emailra">
+			      </div>
+				</div>
+			    <div class="control-group">
+			      <label class="control-label" for="namera"><strong>Name</strong></label>
+			      <div class="controls control-group namera">
+			        <input type="text" class="input-xlarge" id="namera">
+			      </div>
+				</div>
+			    <div class="control-group">
+			      <label class="control-label" for="msgra"><strong>Message</strong></label>
+			      <div class="controls control-group msgra">
+					<textarea name="msgra" rows="8" cols="100" id="msgra" placeholder="Tell me a little bit about where you live and what you're interested in buying from me."></textarea>
+			      </div>
+			
+			    </div>
+			  </fieldset>
+			</form>
+			<button type="submit" class="btn btn-primary submitra pull-right" id="submit-ra"> Submit </button>
+        </div>
+
+    </div>
+	
+</template>
+
+<template name="notify">
+	
+	<div class="modal fade hide" id="notify">
+        
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal"> × </a>
+            <h3>Awesome!</h3>
+        </div>
+        
+        <div class="modal-body">
+			<h4>I will get back to you as soon as possible!</h4>
+        </div>
+    </div>
+</template>
+
+
+
+<template name="confirmToBid">
+	
+	<div class="modal fade hide" id="confirmToBid">
+        
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal"> × </a>
+			<h3>Bid Confirmation</h3>
+        </div>
+        
+        <div class="modal-body">
+            <h5>Are you sure you want to bid on this?</h5>
+			<a class="btn btn-success pull-right yes" id="yes">Yes </a>
+			<a class="btn btn-danger pull-right no" id="no"> No </a>
+        </div>
+    </div>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
